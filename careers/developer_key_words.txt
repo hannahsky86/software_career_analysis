@@ -2,7 +2,6 @@ Java
 Web 
 frameworks
 API
-dōTERRA
 JavaScript
 SQL
 UI
