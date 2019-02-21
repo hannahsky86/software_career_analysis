@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6fa1df6c1c32fba17b3b8a55bb451cdd37fdc020
 APL
 AutoIt
 BASIC
