@@ -3,8 +3,10 @@ from collections import Counter
 import re
 import pandas as pd
 from wordcloud import WordCloud, STOPWORDS
+from PIL import Image
+import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
+import requests
 
 
 class SoftwareCareerAnalysis:
@@ -14,36 +16,44 @@ class SoftwareCareerAnalysis:
         self.key_words = key_words
 
     def software_key_word_analysis(self, file, fig):
-        """Creates a list of times, in half hour increments, when all team members are available."""
+        """Creates a list of times, in half hour increments, when all team members are available.
+            https://www.scriptol.com/programming/list-programming-languages.php
+        """
+
         key_words = self.key_words
-        list = []
+
+        mask = np.array(Image.open(
+            requests.get('http://www.clker.com/cliparts/7/1/4/4/11954261251065555692liftarn_Su-27_silhouette.svg.med.png', stream=True).raw))
+        text = ''
+        for kw in key_words:
+            text += kw
+
+        word_list = []
         for line in file:
             for word in line.split():
-                list.append(word)
-        counts = Counter(list).most_common()
-        keywords = pd.DataFrame(key_words)
-        key_list = keywords[0].apply(clean_words).to_list()
-        counts = pd.DataFrame(counts)
-        counts[3] = counts[0].apply(clean_words)
-        newcounts = counts[counts[3].isin(key_list)][[3, 1]].groupby(3).sum().reset_index()
-        newcounts = newcounts.sort_values(by=1, ascending= False)
-        print(newcounts)
-        create_word_cloud(newcounts, fig)
+                if word in text.split():
+                    word_list.append(word)
+
+        words = Counter(word_list).most_common()
+        words = pd.DataFrame(words)
+        words.columns = ['Names', 'Count']
+        print(words)
+        create_word_cloud(words, fig, mask)
 
 
-def create_word_cloud(word_count, name):
-
-    text = word_count[3].values
+def create_word_cloud(word_list, name, mask):
+    text = word_list["Names"].values
     wordcloud = WordCloud(
         width=5000,
         height=4000,
         background_color='black',
-        stopwords=STOPWORDS).generate(str(text))
+        stopwords=STOPWORDS, mask=mask).generate(str(text))
 
+    plt.figure(figsize=(10,10), facecolor='white', edgecolor='blue')
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis('off')
     plt.tight_layout(pad=0)
-    plt.savefig(name, dpi=200)
+    plt.savefig(name, dpi=400)
 
 
 def clean_words(word):
