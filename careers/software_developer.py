@@ -4,10 +4,11 @@ import re
 from wordcloud import WordCloud, STOPWORDS
 from PIL import Image
 import numpy as np
-import matplotlib.pyplot as plt
-import requests
 import pandas as pd
+from os import path
+import os
 
+d = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
 
 class SoftwareCareerAnalysis:
 
@@ -17,15 +18,10 @@ class SoftwareCareerAnalysis:
         self.other_words = other_words
 
     def software_key_word_analysis(self, file, fig):
-        """Creates a list of times, in half hour increments, when all team members are available.
-            https://www.scriptol.com/programming/list-programming-languages.php
-        """
+        """Find the count of keyword each word in text"""
 
         key_words = self.key_words
-
-        mask = np.array(Image.open(
-         requests.get('http://www.clker.com/cliparts/7/1/4/4/11954261251065555692liftarn_Su-27_silhouette.svg.med.png',
-                                                                                        stream=True).raw))
+        mask = np.array(Image.open("aircraft_carrier.jpg"))
 
         index_words = []
         for kw in key_words:
@@ -54,27 +50,20 @@ class SoftwareCareerAnalysis:
 def generate_wordcloud(words, mask, name):
     """https://blog.goodaudience.com/how-to-generate-a-word-cloud-of-any-shape-in-python-7bce27a55f6e
     https://amueller.github.io/word_cloud/auto_examples/frequency.html
+    https://pngtree.com/so/aircraft-carrier
+
     """
     text = str(words["Words"])
 
-    word_cloud = WordCloud(
-        width=500, height=500,
+    WordCloud(
+        width=800, height=365,
         background_color='black',
         max_words = 20000,
         repeat = True,
         stopwords=STOPWORDS,
-        # contour_width=1,
-        min_font_size=4,
-        # contour_color='gray',
-        # mask=mask
-    ).generate(text)
-
-    plt.figure( facecolor='blue', edgecolor='blue')
-    plt.imshow(word_cloud,interpolation = 'bilinear')
-
-    plt.axis('off')
-    plt.tight_layout(pad=0)
-    plt.savefig(name)
+        min_font_size=1,
+        mask=mask
+    ).generate(text).to_file(path.join(d,name))
 
 
 if __name__ == "__main__":
