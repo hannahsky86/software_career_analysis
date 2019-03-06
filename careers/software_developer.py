@@ -2,12 +2,10 @@
 from collections import Counter
 import re
 from wordcloud import WordCloud, STOPWORDS
-from PIL import Image
-import numpy as np
-import pandas as pd
 from os import path
 import os
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 d = path.dirname(__file__) if "__file__" in locals() else os.getcwd()
@@ -32,8 +30,8 @@ class SoftwareCareerAnalysis:
             for k in kw.split():
                 index_list.append(k)
         program_languages_df = create_word_list(file, index_list)
-        generate_bar_chart(program_languages_df, "bar_chart_other_words_list.png")
-        generate_wordcloud(program_languages_df, "word_cloud_program_languages.png")
+        generate_bar_chart(program_languages_df.head(10), "figures/bar_chart_other_words_list.png")
+        # generate_wordcloud(program_languages_df, "figures/word_cloud_program_languages.png")
 
 
         for ow in open(other_words, "r"):
@@ -43,8 +41,8 @@ class SoftwareCareerAnalysis:
                 index_list.append(o)
 
         complete_list_df = create_word_list(file, index_list)
-        generate_bar_chart(complete_list_df, "bar_chart_program_languages.png")
-        generate_wordcloud(complete_list_df, "word_cloud_software_words.png")
+        generate_bar_chart(complete_list_df.head(15), "figures/bar_chart_program_languages.png")
+        # generate_wordcloud(complete_list_df, "figures/word_cloud_software_words.png")
 
 
 def create_word_list(file, index_words):
@@ -63,15 +61,12 @@ def create_word_list(file, index_words):
 
 def generate_bar_chart(words, name):
 
-    fig, ax = plt.subplots(nrows=1, ncols=1)
-    words = words.head(10)
-    index = np.arange(len(words['Words']))
-    ax.barh(index, words['Counts'])
-    plt.xlabel('Words', fontsize=5)
-    plt.ylabel('No of Words', fontsize=5)
-    plt.xticks(index, words['Words'], fontsize=10, rotation=30)
-    plt.title('Words')
-    fig.savefig(path.join(d,name),dpi=200 )
+    words.plot(kind = 'bar', x= "Words", y = "Counts", label="Word Count")
+    plt.xlabel('Words')
+    plt.ylabel('Number of Words')
+    plt.xticks(rotation=45)
+    plt.title("Occurrence of Words \n from Job Listings in Utah", weight = 'bold', size = 14)
+    plt.savefig(path.join(d,name),dpi=200, bbox_inches="tight", pad_inches=.2)
 
 
 
